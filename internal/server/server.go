@@ -48,7 +48,7 @@ func Start(port string, cache Cache) error {
 
 	}
 	grpcServer := grpc.NewServer()
-	pb.RegisterTSS(grpcServer, NewServer(cache))
+	pb.RegisterThumbnailServiceServer(grpcServer, NewServer(cache))
 	log.Printf("gRPC сервер ждет запросов на порте: %s", port)
 	return grpcServer.Serve(listener)
 }
