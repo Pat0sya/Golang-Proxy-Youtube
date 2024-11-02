@@ -6,6 +6,8 @@ import (
 	"log"
 	"net"
 
+	pb "Golang-Proxy-Youtube/proto"
+
 	"google.golang.org/grpc"
 )
 
@@ -25,8 +27,8 @@ func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*p
 		return nil, fmt.Errorf("Ошибка в получении хеша: %w", err)
 	}
 	if thumbnail != "" {
-		log.Panicf("Попадание в кэш для ID: %s", videoID)
-		return &pb.ThumbnailResponse{Thumbnail: thumbnail}, nil
+		log.Printf("Попадание в кэш для ID: %s", videoID)
+		return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil
 	}
 	thumbnail, err = FetchThumbnail(videoID)
 	if err != nil {
@@ -39,14 +41,19 @@ func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*p
 	}
 	return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil
 }
-func Start(port string, cache Cache)error{
+func Start(port string, cache Cache) error {
 	listener, err := net.Listen("tcp", port)
-	if err != nil{
+	if err != nil {
 		return fmt.Errorf("Не получен ответ: %w", err)
 
 	}
 	grpcServer := grpc.NewServer()
 	pb.RegisterTSS(grpcServer, NewServer(cache))
 	log.Printf("gRPC сервер ждет запросов на порте: %s", port)
-	return grpcServer.Server(listener)
+	return grpcServer.Serve(listener)
+}
+
+func FetchThumbnail(videoID string) (string, error) {
+	thumbnailURL := fmt.Sprintf("https://img.youtube.com/vi/%s/0.jpg", videoID)
+	return thumbnailURL, nil
 }
