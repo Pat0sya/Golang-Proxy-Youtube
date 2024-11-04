@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	pb "Golang-Proxy-Youtube/proto"
 )
@@ -17,7 +18,7 @@ type Client struct {
 }
 
 func NewClient(serverAddr string) (*Client, error) {
-	conn, err := grpc.Dial(serverAddr, grpc.WithInsecure()) //Что уже deped?! Прочитать!
+	conn, err := grpc.NewClient(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials())) //Что уже deped?! Прочитать!
 	if err != nil {
 		return nil, fmt.Errorf("Ошибка при подключении к gRPC серверу: %w", err)
 	}
