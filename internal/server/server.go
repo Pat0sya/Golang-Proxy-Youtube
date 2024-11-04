@@ -12,8 +12,8 @@ import (
 )
 
 type Server struct {
-	pb.UnimplementedThumbnailServiceServer       //TODO Иплементировать!!!
-	cache                                  Cache // Интерфейс тоже!
+	pb.UnimplementedThumbnailServiceServer
+	cache Cache
 }
 
 func NewServer(cache Cache) *Server {

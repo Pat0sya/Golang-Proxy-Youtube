@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	port := "50051"
+	port := "localhost:50051"
 	cache := server.NewMemoryCache()
 	if err := server.Start(port, cache); err != nil {
 		log.Fatalf("Ошибка запуска gRPC сервера: %v", err)
