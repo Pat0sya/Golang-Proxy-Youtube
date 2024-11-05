@@ -3,6 +3,10 @@ package client
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -61,4 +65,25 @@ func (c *Client) GetThumbnailAsync(videoIDs []string) map[string]string {
 	wg.Wait()
 	return results
 
+}
+func DownloadThumbnail(url, videoID, outputDir string) error {
+	response, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("Ошибка в скачивании превью: %w", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("Ошибка в загрузке превью, статус: %d", response.StatusCode)
+
+	}
+	filename := filepath.Join(outputDir, fmt.Sprintf("%s.jpg", videoID))
+	file, err := os.Create(filename)
+	defer file.Close()
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		return fmt.Errorf("Ошибка в загрузке превью в файл: %w", err)
+	}
+
+	fmt.Printf("Превью сохранен в %s\n", filename)
+	return nil
 }
