@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	async := flag.Bool("async", false, "скачиваются превью асихронно")
+	async := flag.Bool("async", false, "скачивание превью асихронно")
 	outputDir := flag.String("output-dir", ".", "директория для скачивания")
 	flag.Parse()
 
 	videoIDs := flag.Args()
 	if len(videoIDs) == 0 {
-		fmt.Println("Пожалуйства напишите хотябы одно ID видео.")
+		fmt.Println("Пожалуйства напишите хотя бы одно ID видео.")
 		os.Exit(1)
 	}
 	if err := os.MkdirAll(*outputDir, os.ModePerm); err != nil {
@@ -32,7 +32,6 @@ func main() {
 		results := c.GetThumbnailAsync(videoIDs)
 		for id, url := range results {
 			if url == "" {
-
 				fmt.Printf("Ошибка в получении превью видео ID: %s", id)
 				continue
 			}
