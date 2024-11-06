@@ -1,6 +1,6 @@
 module Golang-Proxy-Youtube
 
-go 1.23.2
+go 1.23
 
 require google.golang.org/grpc v1.67.1
 
