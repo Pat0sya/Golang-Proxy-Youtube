@@ -35,18 +35,14 @@ func main() {
 				fmt.Printf("Ошибка в получении превью видео ID: %s", id)
 				continue
 			}
-			if err := client.DownloadThumbnail(url, id, *outputDir); err != nil {
+			if err := c.DownloadThumbnail(id, *outputDir); err != nil {
 				log.Printf("Ошибка в скачивании видео с ID %s: %v", id, err)
 			}
 
 		}
 	} else {
 		for _, videoID := range videoIDs {
-			url, err := c.GetThumbnail(videoID)
-			if err != nil {
-				log.Printf("Ошибка в получении превью для %s: %v", videoID, err)
-			}
-			if err := client.DownloadThumbnail(url, videoID, *outputDir); err != nil {
+			if err := c.DownloadThumbnail(videoID, *outputDir); err != nil {
 				fmt.Printf("Ошибка в скачивании для видео с ID %s: %v", videoID, err)
 			}
 		}

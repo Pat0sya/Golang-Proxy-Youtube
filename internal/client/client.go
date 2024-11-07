@@ -23,13 +23,14 @@ type Client struct {
 	cache  *cache.RedisCache
 }
 
-func NewClient(serverAddr, redisAddr string) (*Client, error) {
+func NewClient(serverAddr string) (*Client, error) {
 	conn, err := grpc.NewClient(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials())) //Что уже deped?! Прочитать!
 	if err != nil {
 		return nil, fmt.Errorf("Ошибка при подключении к gRPC серверу: %w", err)
 	}
 
 	client := pb.NewThumbnailServiceClient(conn)
+	redisAddr := "localhost:6379"
 	redisCache := cache.NewRedisCache(redisAddr, "", 0)
 
 	return &Client{conn: conn, client: client, cache: redisCache}, nil
