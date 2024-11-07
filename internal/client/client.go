@@ -13,25 +13,31 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
+	"Golang-Proxy-Youtube/pkg/cache"
 	pb "Golang-Proxy-Youtube/proto"
 )
 
 type Client struct {
 	conn   *grpc.ClientConn
 	client pb.ThumbnailServiceClient
+	cache  *cache.RedisCache
 }
 
-func NewClient(serverAddr string) (*Client, error) {
+func NewClient(serverAddr, redisAddr string) (*Client, error) {
 	conn, err := grpc.NewClient(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials())) //Что уже deped?! Прочитать!
 	if err != nil {
 		return nil, fmt.Errorf("Ошибка при подключении к gRPC серверу: %w", err)
 	}
+
 	client := pb.NewThumbnailServiceClient(conn)
-	return &Client{conn: conn, client: client}, nil
+	redisCache := cache.NewRedisCache(redisAddr, "", 0)
+
+	return &Client{conn: conn, client: client, cache: redisCache}, nil
 
 }
 func (c *Client) Close() {
 	c.conn.Close()
+	c.cache.Close()
 }
 func (c *Client) GetThumbnail(videoID string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -66,24 +72,57 @@ func (c *Client) GetThumbnailAsync(videoIDs []string) map[string]string {
 	return results
 
 }
-func DownloadThumbnail(url, videoID, outputDir string) error {
+
+/* This is code of the early implementation, feel free to edit and use
+ */
+//	func DownloadThumbnail(url, videoID, outputDir string) error {
+//		response, err := http.Get(url)
+//		if err != nil {
+//			return fmt.Errorf("Ошибка в скачивании превью: %w", err)
+//		}
+//		defer response.Body.Close()
+//		if response.StatusCode != http.StatusOK {
+//			return fmt.Errorf("Ошибка в загрузке превью, статус: %d", response.StatusCode)
+//
+//		}
+//		filename := filepath.Join(outputDir, fmt.Sprintf("%s.jpg", videoID))
+//		file, err := os.Create(filename)
+//		defer file.Close()
+//		_, err = io.Copy(file, response.Body)
+//		if err != nil {
+//			return fmt.Errorf("Ошибка в загрузке превью в файл: %w", err)
+//		}
+//
+//		fmt.Printf("Превью сохранен в %s\n", filename)
+//		return nil
+//	}
+func (c *Client) DownloadThumbnail(videoID, outputDir string) error {
+	cacheKey := fmt.Sprintf("thumbnail:%s", videoID)
+	cachedData, err := c.cache.Get(cacheKey)
+	if err == nil && cachedData != nil {
+		filename := filepath.Join(outputDir, fmt.Sprintf("%s.jpg", videoID))
+		return os.WriteFile(filename, cachedData, 0644)
+	}
+	url, err := c.GetThumbnail(videoID)
+	if err != nil {
+		return fmt.Errorf("ошибка в получении превью: %w", err)
+	}
 	response, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("Ошибка в скачивании превью: %w", err)
 	}
 	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("Ошибка в загрузке превью, статус: %d", response.StatusCode)
+		return fmt.Errorf("Ошибка с скачивании превью, статус код: %d", response.StatusCode)
+	}
+	imageData, err := io.ReadAll(response.Body)
+	if err != nil {
+		return fmt.Errorf("Ошибка в получении данных: %w", err)
 
+	}
+	if err := c.cache.Set(cacheKey, imageData, 24*time.Hour); err != nil {
+		return fmt.Errorf("Ошибка в кэшировании: %w", err)
 	}
 	filename := filepath.Join(outputDir, fmt.Sprintf("%s.jpg", videoID))
-	file, err := os.Create(filename)
-	defer file.Close()
-	_, err = io.Copy(file, response.Body)
-	if err != nil {
-		return fmt.Errorf("Ошибка в загрузке превью в файл: %w", err)
-	}
-
-	fmt.Printf("Превью сохранен в %s\n", filename)
-	return nil
+	return os.WriteFile(filename, imageData, 0644)
 }
