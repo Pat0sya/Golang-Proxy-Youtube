@@ -8,7 +8,7 @@ import (
 )
 
 func TestClientRun(t *testing.T) {
-	cmd := exec.Command("go", "run", "cmd/client/main.go", "--output-dir=thumbnails", "--async", "--server-address=localhost:50051", "test_video")
+	cmd := exec.Command("go", "run", "src/client/main.go", "--output-dir=thumbnails", "--async", "--server-address=localhost:50051", "test_video")
 
 	err := cmd.Run()
 
