@@ -1,4 +1,4 @@
-#YouTube Thumbnail gRPC Proxy Service
+YouTube Thumbnail gRPC Proxy Service
 ---
 
 
