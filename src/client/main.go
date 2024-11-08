@@ -21,7 +21,7 @@ func main() {
 	if err := os.MkdirAll(*outputDir, os.ModePerm); err != nil {
 		log.Fatalf("Ошибка в создании директории: %v", err)
 	}
-	serverAddr := "localhost:50051"
+	const serverAddr = "localhost:50051"
 	c, err := client.NewClient(serverAddr)
 	if err != nil {
 		log.Fatalf("Ошибка создании клиента: %v", err)
