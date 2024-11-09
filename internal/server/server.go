@@ -16,13 +16,17 @@ type Server struct {
 	cache Cache
 }
 
+// NewServer создаёт новый сервер с переданным кэшем
 func NewServer(cache Cache) *Server {
 	return &Server{cache: cache}
 }
 
+// GetThumbnail возвращает URL превью, с проверкой кэша, естественно
 func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*pb.ThumbnailResponse, error) {
 	videoID := req.GetVideoId()
+	// Ищем в кэше превьюшку.
 	thumbnail, err := s.cache.Get(videoID)
+	//Хренова туча проверок
 	if err != nil {
 		return nil, fmt.Errorf("Ошибка в получении хеша: %w", err)
 	}
@@ -41,6 +45,8 @@ func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*p
 	}
 	return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil
 }
+
+// Start запускает gRPC сервер на заданном порту
 func Start(port string, cache Cache) error {
 	listener, err := net.Listen("tcp", port)
 	if err != nil {
@@ -53,6 +59,7 @@ func Start(port string, cache Cache) error {
 	return grpcServer.Serve(listener)
 }
 
+// FetchThumbnail строит URL к превьюшке,
 func FetchThumbnail(videoID string) (string, error) {
 	thumbnailURL := fmt.Sprintf("https://img.youtube.com/vi/%s/0.jpg", videoID)
 	return thumbnailURL, nil

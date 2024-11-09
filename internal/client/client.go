@@ -1,3 +1,5 @@
+// Пакет client реализует клиента для работы с gRPC сервером, который предоставляет
+// сервис для получения превью (thumbnail) видео с YouTube, с возможностью кэширования изображений в Redis.
 package client
 
 import (
@@ -23,6 +25,7 @@ type Client struct {
 	cache  *cache.RedisCache
 }
 
+// NewClient создаёт нового клиента для gRPC-сервиса
 func NewClient(serverAddr string) (*Client, error) {
 	conn, err := grpc.NewClient(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials())) //Что уже deped?! Прочитать!
 	if err != nil {
@@ -36,10 +39,14 @@ func NewClient(serverAddr string) (*Client, error) {
 	return &Client{conn: conn, client: client, cache: redisCache}, nil
 
 }
+
+// Close закрывает соединения gRPC и Redis
 func (c *Client) Close() {
 	c.conn.Close()
 	c.cache.Close()
 }
+
+// GetThumbnail запрашивает URL превью у сервиса
 func (c *Client) GetThumbnail(videoID string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -51,9 +58,12 @@ func (c *Client) GetThumbnail(videoID string) (string, error) {
 	}
 	return res.GetThumbnailUrl(), nil
 }
+
+// GetThumbnailAsync параллельно запрашивает URL-ы превьюшек для нескольких видео
 func (c *Client) GetThumbnailAsync(videoIDs []string) map[string]string {
 	var wg sync.WaitGroup
 	results := make(map[string]string)
+	//Рутины!
 	mu := &sync.Mutex{}
 	for _, videoID := range videoIDs {
 		wg.Add(1)

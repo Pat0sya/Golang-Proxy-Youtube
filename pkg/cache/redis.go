@@ -9,14 +9,15 @@ import (
 
 type RedisCache struct {
 	client *redis.Client
-	ctx    context.Context
+	ctx    context.Context // Контекст на все случаи жизни
 }
 
+// NewRedisCache создаёт клиент для работы с Redis
 func NewRedisCache(addr, password string, db int) *RedisCache {
 	ctx := context.Background()
 	client := redis.NewClient(&redis.Options{
 		Addr:     addr,
-		Password: password,
+		Password: password, /* Вроде хотел за имплементить*/
 		DB:       db,
 	})
 	return &RedisCache{

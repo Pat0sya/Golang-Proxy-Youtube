@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	//Флаги
 	async := flag.Bool("async", false, "скачивание превью асихронно")
 	outputDir := flag.String("output-dir", ".", "директория для скачивания")
 	flag.Parse()
@@ -18,6 +19,7 @@ func main() {
 		fmt.Println("Пожалуйства напишите хотя бы одно ID видео.")
 		os.Exit(1)
 	}
+	//Папка
 	if err := os.MkdirAll(*outputDir, os.ModePerm); err != nil {
 		log.Fatalf("Ошибка в создании директории: %v", err)
 	}
