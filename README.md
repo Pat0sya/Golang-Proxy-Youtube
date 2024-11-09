@@ -76,7 +76,7 @@ go run src/client/main.go [--output-dir=<path>] [--async] <video_id_1> <video_id
    go run src/client/main.go  --output-dir=thumbnails dQw4w9WgXcQ
    ```
 
-2. **Скачивание нескольких видео асинхронно**:
+2. **Скачивание нескольких превью асинхронно**:
    ```bash
    go run src/client/main.go --output-dir=thumbnails --async dQw4w9WgXcQ RDFxPcwn1Z5uw
    ```
