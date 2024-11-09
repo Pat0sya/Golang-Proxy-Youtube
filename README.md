@@ -62,7 +62,7 @@ CLI инструмент позволит пользователям запра�
 #### Синтаксис
 
 ```bash
-go run src/client/main.go <[--output-dir=<path>] [--async] video_id_1> <video_id_2> ...
+go run src/client/main.go [--output-dir=<path>] [--async] <video_id_1> <video_id_2> ...
 ```
 
 - **`<video_id>`**: Одно или больше ID видео, которые будут скачены.
