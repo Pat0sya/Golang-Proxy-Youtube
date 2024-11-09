@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	pb "Golang-Proxy-Youtube/proto"
 
@@ -24,6 +25,8 @@ func NewServer(cache Cache) *Server {
 // GetThumbnail возвращает URL превью, с проверкой кэша, естественно
 func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*pb.ThumbnailResponse, error) {
 	videoID := req.GetVideoId()
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	// Ищем в кэше превьюшку.
 	thumbnail, err := s.cache.Get(videoID)
 	//Хренова туча проверок
