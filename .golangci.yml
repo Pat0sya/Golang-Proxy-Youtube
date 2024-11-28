@@ -1,0 +1,18 @@
+run:
+  timeout: 5m  # Установите время выполнения (по умолчанию 1 минута)
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+  disable:
+    - gocyclo   # Пример отключения линтера
+issues:
+  max-same-issues: 5  # Максимальное число одинаковых ошибок
+  max-issues-per-linter: 0
+  exclude-rules:
+    - linters:
+        - errcheck
+      text: "http.Get"

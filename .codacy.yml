@@ -1,0 +1,14 @@
+version: 2
+engines:
+  go:
+    enabled: true
+    lint:
+      - govet
+      - staticcheck
+      - errcheck
+    coverage:
+      enabled: true
+    testing:
+      enabled: true
+    security:
+      enabled: true

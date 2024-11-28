@@ -1,0 +1,108 @@
+{
+	"Golang errors": {},
+	"Issues": [
+		{
+			"severity": "MEDIUM",
+			"confidence": "MEDIUM",
+			"cwe": {
+				"id": "88",
+				"url": "https://cwe.mitre.org/data/definitions/88.html"
+			},
+			"rule_id": "G107",
+			"details": "Potential HTTP request made with variable url",
+			"file": "D:\\Code\\Other\\Golang-Proxy-Youtube\\internal\\client\\client.go",
+			"code": "120: \t}\n121: \tresponse, err := http.Get(url)\n122: \tif err != nil {\n",
+			"line": "121",
+			"column": "19",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "276",
+				"url": "https://cwe.mitre.org/data/definitions/276.html"
+			},
+			"rule_id": "G301",
+			"details": "Expect directory permissions to be 0750 or less",
+			"file": "D:\\Code\\Other\\Golang-Proxy-Youtube\\src\\client\\main.go",
+			"code": "22: \t//Папка\n23: \tif err := os.MkdirAll(*outputDir, os.ModePerm); err != nil {\n24: \t\tlog.Fatalf(\"Ошибка в создании директории: %v\", err)\n",
+			"line": "23",
+			"column": "12",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "276",
+				"url": "https://cwe.mitre.org/data/definitions/276.html"
+			},
+			"rule_id": "G306",
+			"details": "Expect WriteFile permissions to be 0600 or less",
+			"file": "D:\\Code\\Other\\Golang-Proxy-Youtube\\internal\\client\\client.go",
+			"code": "137: \tfilename := filepath.Join(outputDir, fmt.Sprintf(\"%s.jpg\", videoID))\n138: \treturn os.WriteFile(filename, imageData, 0644)\n139: }\n",
+			"line": "138",
+			"column": "9",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "276",
+				"url": "https://cwe.mitre.org/data/definitions/276.html"
+			},
+			"rule_id": "G306",
+			"details": "Expect WriteFile permissions to be 0600 or less",
+			"file": "D:\\Code\\Other\\Golang-Proxy-Youtube\\internal\\client\\client.go",
+			"code": "114: \t\tfilename := filepath.Join(outputDir, fmt.Sprintf(\"%s.jpg\", videoID))\n115: \t\treturn os.WriteFile(filename, cachedData, 0644)\n116: \t}\n",
+			"line": "115",
+			"column": "10",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "D:\\Code\\Other\\Golang-Proxy-Youtube\\internal\\client\\client.go",
+			"code": "45: \tc.conn.Close()\n46: \tc.cache.Close()\n47: }\n",
+			"line": "46",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "D:\\Code\\Other\\Golang-Proxy-Youtube\\internal\\client\\client.go",
+			"code": "44: func (c *Client) Close() {\n45: \tc.conn.Close()\n46: \tc.cache.Close()\n",
+			"line": "45",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		}
+	],
+	"Stats": {
+		"files": 9,
+		"lines": 695,
+		"nosec": 0,
+		"found": 6
+	},
+	"GosecVersion": "dev"
+}
