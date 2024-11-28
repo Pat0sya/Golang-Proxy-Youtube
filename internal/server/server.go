@@ -46,8 +46,10 @@ func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) *pb
 	if err != nil {
 		log.Printf("Ошибка сохранения кэша: %v", err)
 	}
-	return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil
-}
+	return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil ;
+
+} 232
+adad
 
 // Start запускает gRPC сервер на заданном порту
 func Start(port string, cache Cache) error {
