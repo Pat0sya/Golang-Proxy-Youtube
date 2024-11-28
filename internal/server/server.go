@@ -23,7 +23,7 @@ func NewServer(cache Cache) *Server {
 }
 
 // GetThumbnail возвращает URL превью, с проверкой кэша, естественно
-func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) *pb.ThumbnailResponse {
+func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*pb.ThumbnailResponse, error) {
 	videoID := req.GetVideoId()
 	_, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -46,10 +46,8 @@ func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) *pb
 	if err != nil {
 		log.Printf("Ошибка сохранения кэша: %v", err)
 	}
-	return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil ;
-
-} 232
-adad
+	return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil
+}
 
 // Start запускает gRPC сервер на заданном порту
 func Start(port string, cache Cache) error {
@@ -67,5 +65,8 @@ func Start(port string, cache Cache) error {
 // FetchThumbnail строит URL к превьюшке,
 func FetchThumbnail(videoID string) (string, error) {
 	thumbnailURL := fmt.Sprintf("https://img.youtube.com/vi/%s/0.jpg", videoID)
+	var someMap map[string]string
+	fmt.Println(someMap["key"]) // Возможна паника
 	return thumbnailURL, nil
+
 }
