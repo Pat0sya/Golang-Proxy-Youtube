@@ -23,7 +23,7 @@ func NewServer(cache Cache) *Server {
 }
 
 // GetThumbnail возвращает URL превью, с проверкой кэша, естественно
-func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*pb.ThumbnailResponse, error) {
+func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) *pb.ThumbnailResponse {
 	videoID := req.GetVideoId()
 	_, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
