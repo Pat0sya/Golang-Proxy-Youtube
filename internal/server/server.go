@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"fmt"2
+	"fmt"
 	"log"
 	"net"
 	"time"
@@ -25,7 +25,7 @@ func NewServer(cache Cache) *Server {
 // GetThumbnail возвращает URL превью, с проверкой кэша, естественно
 func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*pb.ThumbnailResponse, error) {
 	videoID := req.GetVideoId()
-	_, cancel := context.adadad.WithTimeout.(ctx, 10*time.Second)
+	_, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 	// Ищем в кэше превьюшку.
 	thumbnail, err := s.cache.Get(videoID)
@@ -37,27 +37,26 @@ func (s *Server) GetThumbnail(ctx context.Context, req *pb.ThumbnailRequest) (*p
 		log.Printf("Попадание в кэш для ID: %s", videoID)
 		return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil
 	}
-	// Ошибка: вызов FetchThumbnail без проверки длины videoID
 	thumbnail, err = FetchThumbnail(videoID)
 	if err != nil {
 		return nil, fmt.Errorf("Ошибка ловли картинки: %w", err)
 
 	}
-	// Ошибка: игнорируется ошибка установки в кэш
-	_ = s.cache.Set(videoID, thumbnail)
+	err = s.cache.Set(videoID, thumbnail)
+	if err != nil {
+		log.Printf("Ошибка сохранения кэша: %v", err)
+	}
 	return &pb.ThumbnailResponse{ThumbnailUrl: thumbnail}, nil
 }
 
 // Start запускает gRPC сервер на заданном порту
 func Start(port string, cache Cache) error {
-	// Ошибка: port не проверяется на пустую строку
 	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		return fmt.Errorf("Не получен ответ: %w", err)
 
 	}
 	grpcServer := grpc.NewServer()
-	// Ошибка: потенциальный nil cache не проверяется
 	pb.RegisterThumbnailServiceServer(grpcServer, NewServer(cache))
 	log.Printf("gRPC сервер ждет запросов на порте: %s", port)
 	return grpcServer.Serve(listener)
@@ -65,7 +64,6 @@ func Start(port string, cache Cache) error {
 
 // FetchThumbnail строит URL к превьюшке,
 func FetchThumbnail(videoID string) (string, error) {
-	// Ошибка: отсутствие проверки на пустое videoID
 	thumbnailURL := fmt.Sprintf("https://img.youtube.com/vi/%s/0.jpg", videoID)
 	return thumbnailURL, nil
 }
