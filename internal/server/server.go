@@ -65,10 +65,5 @@ func Start(port string, cache Cache) error {
 // FetchThumbnail строит URL к превьюшке,
 func FetchThumbnail(videoID string) (string, error) {
 	thumbnailURL := fmt.Sprintf("https://img.youtube.com/vi/%s/0.jpg", videoID)
-	var someMap map[string]string
-	fmt.Println(someMap["key"]) // Возможна паника
-	unusedVar := 42
-
 	return thumbnailURL, nil
-
 }
